@@ -1,0 +1,2771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMaster Pro - Advanced Interactive Mathematics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@300;400;600&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff88;
+            --secondary: #ff00ff;
+            --accent: #00d4ff;
+            --bg-dark: #0a0a0f;
+            --bg-darker: #050508;
+            --bg-card: #1a1a2e;
+            --text: #ffffff;
+            --text-dim: #a0a0b0;
+            --success: #00ff88;
+            --error: #ff3366;
+            --warning: #ffaa00;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .shape:nth-child(1) {
+            left: 10%;
+            top: 20%;
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+        
+        .shape:nth-child(2) {
+            right: 15%;
+            top: 40%;
+            width: 80px;
+            height: 80px;
+            border: 2px solid var(--secondary);
+            transform: rotate(45deg);
+            animation-delay: 3s;
+        }
+        
+        .shape:nth-child(3) {
+            left: 60%;
+            bottom: 20%;
+            width: 120px;
+            height: 120px;
+            border: 2px solid var(--accent);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation-delay: 6s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-50px) rotate(180deg); }
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--bg-darker), var(--bg-card));
+            padding: 2rem;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        
+        .stats {
+            display: flex;
+            gap: 2rem;
+            font-family: 'Fira Code', monospace;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        
+        /* Navigation */
+        nav {
+            background: var(--bg-card);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1);
+        }
+        
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(135deg, var(--bg-darker), var(--bg-card));
+            color: var(--text);
+            border: 2px solid transparent;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+        
+        .nav-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--bg-dark);
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 255, 136, 0.2);
+        }
+        
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .card-title::before {
+            content: '▸';
+            color: var(--accent);
+        }
+        
+        /* Calculator Grid */
+        .calc-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .calculator {
+            background: var(--bg-darker);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .calc-display {
+            background: var(--bg-dark);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 2rem;
+            text-align: right;
+            border: 2px solid var(--accent);
+            min-height: 80px;
+            color: var(--primary);
+            overflow-wrap: break-word;
+            word-break: break-all;
+        }
+        
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .calc-btn {
+            background: linear-gradient(135deg, #1a1a2e, #2a2a3e);
+            color: var(--text);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Fira Code', monospace;
+        }
+        
+        .calc-btn:hover {
+            background: linear-gradient(135deg, #2a2a3e, #3a3a4e);
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+        
+        .calc-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .calc-btn.operator {
+            background: linear-gradient(135deg, var(--accent), #0099cc);
+            color: var(--bg-dark);
+        }
+        
+        .calc-btn.equals {
+            background: linear-gradient(135deg, var(--primary), #00cc66);
+            grid-column: span 2;
+            color: var(--bg-dark);
+        }
+        
+        .calc-btn.clear {
+            background: linear-gradient(135deg, var(--error), #cc0033);
+            color: white;
+        }
+        
+        /* Input Groups */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+        
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-darker);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: 'Fira Code', monospace;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+        
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--bg-dark);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Canvas */
+        canvas {
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            background: var(--bg-darker);
+            max-width: 100%;
+            display: block;
+            margin: 1rem auto;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+        }
+        
+        /* Result Display */
+        .result {
+            background: var(--bg-darker);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary);
+            font-family: 'Fira Code', monospace;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .result-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-value {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        /* Matrix Display */
+        .matrix-display {
+            display: inline-block;
+            background: var(--bg-darker);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid var(--accent);
+            margin: 1rem 0;
+        }
+        
+        .matrix-row {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .matrix-cell {
+            width: 60px;
+            padding: 0.5rem;
+            text-align: center;
+            background: var(--bg-card);
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+        
+        /* Graph */
+        .graph-container {
+            position: relative;
+            margin: 2rem 0;
+        }
+        
+        .graph-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Quiz */
+        .quiz-question {
+            background: var(--bg-darker);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .quiz-options {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .quiz-option {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quiz-option:hover {
+            border-color: var(--primary);
+            transform: translateX(10px);
+        }
+        
+        .quiz-option.correct {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 204, 102, 0.2));
+            border-color: var(--success);
+        }
+        
+        .quiz-option.incorrect {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(204, 0, 51, 0.2));
+            border-color: var(--error);
+        }
+        
+        /* Game */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .game-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-darker));
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+        
+        .game-card:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .game-card:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.4);
+        }
+        
+        .game-card.flipped {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--bg-dark);
+        }
+        
+        .game-card.matched {
+            background: linear-gradient(135deg, var(--success), #00cc66);
+            opacity: 0.6;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            background: var(--bg-darker);
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid var(--primary);
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--bg-dark);
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            background: var(--bg-darker);
+            color: var(--text-dim);
+            border: 2px solid transparent;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .tab:hover {
+            border-color: var(--primary);
+            color: var(--text);
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--bg-dark);
+            border-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Formula Display */
+        .formula {
+            background: var(--bg-darker);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            margin: 1rem 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+            overflow-x: auto;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-darker));
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .stat-card-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .stat-card-label {
+            margin-top: 0.5rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        
+        /* Animation Classes */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .rotate {
+            animation: rotate 3s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stats {
+                gap: 1rem;
+            }
+            
+            .calc-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: var(--bg-darker);
+            color: var(--text);
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 2px solid var(--primary);
+            white-space: nowrap;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Particle Effect */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            opacity: 0;
+            animation: particleFloat 2s ease-out;
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="bg-grid"></div>
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1>⚡ MATHMASTER PRO</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="problemsSolved">0</div>
+                    <div class="stat-label" data-translate="problems-solved">Problems Solved</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="accuracy">0%</div>
+                    <div class="stat-label" data-translate="accuracy">Accuracy</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="streak">0</div>
+                    <div class="stat-label" data-translate="streak">Streak</div>
+                </div>
+                <div class="stat">
+                    <select id="languageSelector" onchange="changeLanguage(this.value)" style="background: var(--bg-darker); color: var(--primary); border: 2px solid var(--primary); padding: 0.5rem; border-radius: 8px; font-family: 'Exo 2', sans-serif; font-weight: 700; cursor: pointer; font-size: 1rem;">
+                        <option value="en">🇬🇧 English</option>
+                        <option value="uz">🇺🇿 O'zbek</option>
+                        <option value="ru">🇷🇺 Русский</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <button class="nav-btn active" onclick="switchSection('calculators')" data-translate="nav-calculators">🔢 Calculators</button>
+            <button class="nav-btn" onclick="switchSection('algebra')" data-translate="nav-algebra">📐 Algebra</button>
+            <button class="nav-btn" onclick="switchSection('geometry')" data-translate="nav-geometry">📊 Geometry</button>
+            <button class="nav-btn" onclick="switchSection('calculus')" data-translate="nav-calculus">∫ Calculus</button>
+            <button class="nav-btn" onclick="switchSection('statistics')" data-translate="nav-statistics">📈 Statistics</button>
+            <button class="nav-btn" onclick="switchSection('matrix')" data-translate="nav-matrix">⊞ Matrix</button>
+            <button class="nav-btn" onclick="switchSection('graphing')" data-translate="nav-graphing">📉 Graphing</button>
+            <button class="nav-btn" onclick="switchSection('quiz')" data-translate="nav-quiz">🎯 Quiz</button>
+            <button class="nav-btn" onclick="switchSection('games')" data-translate="nav-games">🎮 Games</button>
+            <button class="nav-btn" onclick="switchSection('translator')" data-translate="nav-translator">🌐 Translator</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Calculators Section -->
+        <div id="calculators" class="section active">
+            <div class="card">
+                <h2 class="card-title">Advanced Calculators</h2>
+                <div class="calc-container">
+                    <!-- Scientific Calculator -->
+                    <div class="calculator">
+                        <h3 style="color: var(--accent); margin-bottom: 1rem;">Scientific Calculator</h3>
+                        <div class="calc-display" id="sciDisplay">0</div>
+                        <div class="calc-buttons">
+                            <button class="calc-btn" onclick="calcInput('sin')">sin</button>
+                            <button class="calc-btn" onclick="calcInput('cos')">cos</button>
+                            <button class="calc-btn" onclick="calcInput('tan')">tan</button>
+                            <button class="calc-btn" onclick="calcInput('log')">log</button>
+                            <button class="calc-btn" onclick="calcInput('sqrt')">√</button>
+                            <button class="calc-btn" onclick="calcInput('^')">^</button>
+                            <button class="calc-btn" onclick="calcInput('(')">(</button>
+                            <button class="calc-btn" onclick="calcInput(')')">)</button>
+                            <button class="calc-btn" onclick="calcInput('7')">7</button>
+                            <button class="calc-btn" onclick="calcInput('8')">8</button>
+                            <button class="calc-btn" onclick="calcInput('9')">9</button>
+                            <button class="calc-btn operator" onclick="calcInput('/')">/</button>
+                            <button class="calc-btn" onclick="calcInput('4')">4</button>
+                            <button class="calc-btn" onclick="calcInput('5')">5</button>
+                            <button class="calc-btn" onclick="calcInput('6')">6</button>
+                            <button class="calc-btn operator" onclick="calcInput('*')">×</button>
+                            <button class="calc-btn" onclick="calcInput('1')">1</button>
+                            <button class="calc-btn" onclick="calcInput('2')">2</button>
+                            <button class="calc-btn" onclick="calcInput('3')">3</button>
+                            <button class="calc-btn operator" onclick="calcInput('-')">-</button>
+                            <button class="calc-btn" onclick="calcInput('0')">0</button>
+                            <button class="calc-btn" onclick="calcInput('.')">.</button>
+                            <button class="calc-btn" onclick="calcInput('π')">π</button>
+                            <button class="calc-btn operator" onclick="calcInput('+')">+</button>
+                            <button class="calc-btn clear" onclick="clearCalc()">C</button>
+                            <button class="calc-btn" onclick="calcInput('e')">e</button>
+                            <button class="calc-btn equals" onclick="calculate()">=</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Algebra Section -->
+        <div id="algebra" class="section">
+            <div class="card">
+                <h2 class="card-title">Quadratic Equation Solver</h2>
+                <div class="formula">ax² + bx + c = 0</div>
+                <div class="input-group">
+                    <label>Coefficient a:</label>
+                    <input type="number" id="quadA" value="1" step="any">
+                </div>
+                <div class="input-group">
+                    <label>Coefficient b:</label>
+                    <input type="number" id="quadB" value="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label>Coefficient c:</label>
+                    <input type="number" id="quadC" value="-4" step="any">
+                </div>
+                <button class="btn" onclick="solveQuadratic()">Solve Equation</button>
+                <div id="quadResult"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">System of Linear Equations</h2>
+                <div class="formula">
+                    ax + by = e<br>
+                    cx + dy = f
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-group">
+                        <label>a:</label>
+                        <input type="number" id="sysA" value="2" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>b:</label>
+                        <input type="number" id="sysB" value="3" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>c:</label>
+                        <input type="number" id="sysC" value="4" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>d:</label>
+                        <input type="number" id="sysD" value="1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>e:</label>
+                        <input type="number" id="sysE" value="8" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>f:</label>
+                        <input type="number" id="sysF" value="10" step="any">
+                    </div>
+                </div>
+                <button class="btn" onclick="solveSystem()">Solve System</button>
+                <div id="systemResult"></div>
+            </div>
+        </div>
+
+        <!-- Geometry Section -->
+        <div id="geometry" class="section">
+            <div class="card">
+                <h2 class="card-title">Area & Volume Calculator</h2>
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('circle')">Circle</button>
+                    <button class="tab" onclick="switchTab('triangle')">Triangle</button>
+                    <button class="tab" onclick="switchTab('sphere')">Sphere</button>
+                    <button class="tab" onclick="switchTab('cylinder')">Cylinder</button>
+                </div>
+
+                <div id="circle" class="tab-content active">
+                    <div class="input-group">
+                        <label>Radius:</label>
+                        <input type="number" id="circleR" value="5" step="any">
+                    </div>
+                    <button class="btn" onclick="calculateCircle()">Calculate</button>
+                    <div id="circleResult"></div>
+                </div>
+
+                <div id="triangle" class="tab-content">
+                    <div class="input-group">
+                        <label>Base:</label>
+                        <input type="number" id="triBase" value="10" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Height:</label>
+                        <input type="number" id="triHeight" value="8" step="any">
+                    </div>
+                    <button class="btn" onclick="calculateTriangle()">Calculate</button>
+                    <div id="triangleResult"></div>
+                </div>
+
+                <div id="sphere" class="tab-content">
+                    <div class="input-group">
+                        <label>Radius:</label>
+                        <input type="number" id="sphereR" value="3" step="any">
+                    </div>
+                    <button class="btn" onclick="calculateSphere()">Calculate</button>
+                    <div id="sphereResult"></div>
+                </div>
+
+                <div id="cylinder" class="tab-content">
+                    <div class="input-group">
+                        <label>Radius:</label>
+                        <input type="number" id="cylR" value="4" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Height:</label>
+                        <input type="number" id="cylH" value="10" step="any">
+                    </div>
+                    <button class="btn" onclick="calculateCylinder()">Calculate</button>
+                    <div id="cylinderResult"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Interactive Shape Drawer</h2>
+                <canvas id="shapeCanvas" width="800" height="400"></canvas>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="drawShape('circle')">Draw Circle</button>
+                    <button class="btn" onclick="drawShape('square')">Draw Square</button>
+                    <button class="btn" onclick="drawShape('triangle')">Draw Triangle</button>
+                    <button class="btn" onclick="drawShape('pentagon')">Draw Pentagon</button>
+                    <button class="btn" onclick="clearCanvas()">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculus Section -->
+        <div id="calculus" class="section">
+            <div class="card">
+                <h2 class="card-title">Derivative Calculator</h2>
+                <div class="input-group">
+                    <label>Function (use x as variable):</label>
+                    <input type="text" id="derivFunc" value="x^2" placeholder="e.g., x^2, sin(x), e^x">
+                </div>
+                <button class="btn" onclick="calculateDerivative()">Find Derivative</button>
+                <div id="derivResult"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Integral Calculator</h2>
+                <div class="input-group">
+                    <label>Function:</label>
+                    <input type="text" id="integralFunc" value="x^2" placeholder="e.g., x^2, sin(x)">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-group">
+                        <label>Lower Bound:</label>
+                        <input type="number" id="integralLower" value="0" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Upper Bound:</label>
+                        <input type="number" id="integralUpper" value="1" step="any">
+                    </div>
+                </div>
+                <button class="btn" onclick="calculateIntegral()">Calculate Integral</button>
+                <div id="integralResult"></div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div id="statistics" class="section">
+            <div class="card">
+                <h2 class="card-title">Statistical Analysis</h2>
+                <div class="input-group">
+                    <label>Enter Data (comma-separated):</label>
+                    <input type="text" id="statsData" value="10, 15, 20, 25, 30, 35, 40" placeholder="e.g., 1, 2, 3, 4, 5">
+                </div>
+                <button class="btn" onclick="calculateStats()">Analyze Data</button>
+                <div id="statsResult"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Probability Calculator</h2>
+                <div class="input-group">
+                    <label>Number of Trials:</label>
+                    <input type="number" id="probTrials" value="10" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Success Probability (0-1):</label>
+                    <input type="number" id="probSuccess" value="0.5" step="0.01" min="0" max="1">
+                </div>
+                <div class="input-group">
+                    <label>Number of Successes:</label>
+                    <input type="number" id="probK" value="5" min="0">
+                </div>
+                <button class="btn" onclick="calculateProbability()">Calculate</button>
+                <div id="probResult"></div>
+            </div>
+        </div>
+
+        <!-- Matrix Section -->
+        <div id="matrix" class="section">
+            <div class="card">
+                <h2 class="card-title">Matrix Operations</h2>
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('matrixAdd')">Addition</button>
+                    <button class="tab" onclick="switchTab('matrixMult')">Multiplication</button>
+                    <button class="tab" onclick="switchTab('matrixDet')">Determinant</button>
+                    <button class="tab" onclick="switchTab('matrixInv')">Inverse</button>
+                </div>
+
+                <div id="matrixAdd" class="tab-content active">
+                    <h3 style="color: var(--accent); margin: 1rem 0;">Matrix A:</h3>
+                    <div class="matrix-display">
+                        <div class="matrix-row">
+                            <input type="number" class="matrix-cell" id="a11" value="1">
+                            <input type="number" class="matrix-cell" id="a12" value="2">
+                        </div>
+                        <div class="matrix-row">
+                            <input type="number" class="matrix-cell" id="a21" value="3">
+                            <input type="number" class="matrix-cell" id="a22" value="4">
+                        </div>
+                    </div>
+                    <h3 style="color: var(--accent); margin: 1rem 0;">Matrix B:</h3>
+                    <div class="matrix-display">
+                        <div class="matrix-row">
+                            <input type="number" class="matrix-cell" id="b11" value="5">
+                            <input type="number" class="matrix-cell" id="b12" value="6">
+                        </div>
+                        <div class="matrix-row">
+                            <input type="number" class="matrix-cell" id="b21" value="7">
+                            <input type="number" class="matrix-cell" id="b22" value="8">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="addMatrices()">Add Matrices</button>
+                    <div id="matrixAddResult"></div>
+                </div>
+
+                <div id="matrixMult" class="tab-content">
+                    <p style="color: var(--text-dim); margin-bottom: 1rem;">Use the same matrices from the Addition tab</p>
+                    <button class="btn" onclick="multiplyMatrices()">Multiply Matrices</button>
+                    <div id="matrixMultResult"></div>
+                </div>
+
+                <div id="matrixDet" class="tab-content">
+                    <p style="color: var(--text-dim); margin-bottom: 1rem;">Calculating determinant of Matrix A</p>
+                    <button class="btn" onclick="calculateDeterminant()">Calculate Determinant</button>
+                    <div id="matrixDetResult"></div>
+                </div>
+
+                <div id="matrixInv" class="tab-content">
+                    <p style="color: var(--text-dim); margin-bottom: 1rem;">Calculating inverse of Matrix A</p>
+                    <button class="btn" onclick="calculateInverse()">Calculate Inverse</button>
+                    <div id="matrixInvResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphing Section -->
+        <div id="graphing" class="section">
+            <div class="card">
+                <h2 class="card-title">Function Grapher</h2>
+                <div class="graph-controls">
+                    <div class="input-group">
+                        <label>Function:</label>
+                        <input type="text" id="graphFunc" value="x^2" placeholder="e.g., x^2, sin(x), e^x">
+                    </div>
+                    <div class="input-group">
+                        <label>X Min:</label>
+                        <input type="number" id="xMin" value="-10" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>X Max:</label>
+                        <input type="number" id="xMax" value="10" step="any">
+                    </div>
+                </div>
+                <button class="btn" onclick="plotGraph()">Plot Function</button>
+                <canvas id="graphCanvas" width="800" height="500"></canvas>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quiz" class="section">
+            <div class="card">
+                <h2 class="card-title">Math Quiz Challenge</h2>
+                <div class="progress-container">
+                    <div class="progress-bar" id="quizProgress" style="width: 0%">0%</div>
+                </div>
+                <div id="quizContainer"></div>
+                <button class="btn" onclick="startQuiz()">Start New Quiz</button>
+            </div>
+        </div>
+
+        <!-- Games Section -->
+        <div id="games" class="section">
+            <div class="card">
+                <h2 class="card-title" data-translate="memory-game-title">Math Memory Match</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="gameScore">0</div>
+                        <div class="stat-card-label" data-translate="score">Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="gameMoves">0</div>
+                        <div class="stat-card-label" data-translate="moves">Moves</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="gameTime">0:00</div>
+                        <div class="stat-card-label" data-translate="time">Time</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="startMemoryGame()" data-translate="new-game">New Game</button>
+                <div class="game-board" id="gameBoard"></div>
+            </div>
+        </div>
+
+        <!-- Translator Section -->
+        <div id="translator" class="section">
+            <div class="card">
+                <h2 class="card-title" data-translate="translator-title">🌐 Multi-Language Translator</h2>
+                <p style="color: var(--text-dim); margin-bottom: 2rem;" data-translate="translator-desc">Translate text between English, Uzbek, and Russian</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; margin-bottom: 2rem; align-items: start;">
+                    <!-- Source Language -->
+                    <div>
+                        <div class="input-group">
+                            <label data-translate="from-lang">From Language:</label>
+                            <select id="sourceLang" style="background: var(--bg-darker); color: var(--text); border: 2px solid var(--primary); padding: 1rem; border-radius: 8px; font-size: 1rem; width: 100%;">
+                                <option value="en" data-translate="english">English</option>
+                                <option value="uz" data-translate="uzbek">Uzbek</option>
+                                <option value="ru" data-translate="russian">Russian</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label data-translate="enter-text">Enter Text:</label>
+                            <textarea id="sourceText" rows="8" style="width: 100%; padding: 1rem; background: var(--bg-darker); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 8px; color: var(--text); font-size: 1rem; font-family: 'Exo 2', sans-serif; resize: vertical;" placeholder="Type or paste text here..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Swap Button -->
+                    <div style="display: flex; align-items: center; justify-content: center; margin-top: 8rem;">
+                        <button class="btn" onclick="swapLanguages()" style="padding: 1rem; width: 60px; height: 60px; border-radius: 50%;">
+                            ⇄
+                        </button>
+                    </div>
+
+                    <!-- Target Language -->
+                    <div>
+                        <div class="input-group">
+                            <label data-translate="to-lang">To Language:</label>
+                            <select id="targetLang" style="background: var(--bg-darker); color: var(--text); border: 2px solid var(--accent); padding: 1rem; border-radius: 8px; font-size: 1rem; width: 100%;">
+                                <option value="en" data-translate="english">English</option>
+                                <option value="uz" data-translate="uzbek">Uzbek</option>
+                                <option value="ru" data-translate="russian">Russian</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label data-translate="translation">Translation:</label>
+                            <div id="targetText" style="width: 100%; min-height: 200px; padding: 1rem; background: var(--bg-darker); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 8px; color: var(--primary); font-size: 1rem; font-family: 'Exo 2', sans-serif; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn" onclick="translateText()" data-translate="translate-btn">🔄 Translate</button>
+                    <button class="btn" onclick="copyTranslation()" style="background: linear-gradient(135deg, var(--accent), #0099cc);" data-translate="copy-btn">📋 Copy Translation</button>
+                    <button class="btn" onclick="clearTranslator()" style="background: linear-gradient(135deg, var(--error), #cc0033);" data-translate="clear-btn">🗑️ Clear</button>
+                </div>
+
+                <!-- Quick Phrases -->
+                <div style="margin-top: 3rem;">
+                    <h3 style="color: var(--accent); margin-bottom: 1rem;" data-translate="quick-phrases">Quick Phrases:</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <button class="calc-btn" onclick="insertPhrase('Hello, how are you?')" data-translate="phrase-hello">Hello, how are you?</button>
+                        <button class="calc-btn" onclick="insertPhrase('Thank you very much')" data-translate="phrase-thanks">Thank you very much</button>
+                        <button class="calc-btn" onclick="insertPhrase('Good morning')" data-translate="phrase-morning">Good morning</button>
+                        <button class="calc-btn" onclick="insertPhrase('Please help me')" data-translate="phrase-help">Please help me</button>
+                        <button class="calc-btn" onclick="insertPhrase('Where is the nearest hospital?')" data-translate="phrase-hospital">Where is the nearest hospital?</button>
+                        <button class="calc-btn" onclick="insertPhrase('I love mathematics')" data-translate="phrase-math">I love mathematics</button>
+                    </div>
+                </div>
+
+                <!-- Translation History -->
+                <div style="margin-top: 3rem;">
+                    <h3 style="color: var(--accent); margin-bottom: 1rem;" data-translate="translation-history">Translation History:</h3>
+                    <div id="translationHistory" style="max-height: 300px; overflow-y: auto;"></div>
+                </div>
+            </div>
+
+            <!-- Common Math Terms Card -->
+            <div class="card">
+                <h2 class="card-title" data-translate="math-terms-title">📚 Common Math Terms</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div class="result">
+                        <div class="result-label" data-translate="english">English</div>
+                        <div style="font-family: 'Fira Code', monospace; color: var(--text);">
+                            Addition, Subtraction, Multiplication, Division, Equation, Function, Graph, Derivative, Integral, Matrix, Vector, Probability, Statistics, Geometry, Algebra, Calculus
+                        </div>
+                    </div>
+                    <div class="result">
+                        <div class="result-label" data-translate="uzbek">Uzbek (O'zbek)</div>
+                        <div style="font-family: 'Fira Code', monospace; color: var(--text);">
+                            Qo'shish, Ayirish, Ko'paytirish, Bo'lish, Tenglama, Funksiya, Grafik, Hosila, Integral, Matritsa, Vektor, Ehtimollik, Statistika, Geometriya, Algebra, Matematika
+                        </div>
+                    </div>
+                    <div class="result">
+                        <div class="result-label" data-translate="russian">Russian (Русский)</div>
+                        <div style="font-family: 'Fira Code', monospace; color: var(--text);">
+                            Сложение, Вычитание, Умножение, Деление, Уравнение, Функция, График, Производная, Интеграл, Матрица, Вектор, Вероятность, Статистика, Геометрия, Алгебра, Математика
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let calcExpression = '';
+        let problemsSolved = 0;
+        let correctAnswers = 0;
+        let currentStreak = 0;
+        let quizQuestions = [];
+        let currentQuizIndex = 0;
+        let gameCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let gameMoves = 0;
+        let gameStartTime = null;
+        let gameTimer = null;
+
+        // Navigation
+        function switchSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            createParticles(event.clientX, event.clientY);
+        }
+
+        // Tab Switching
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Update tab buttons
+            const tabs = event.target.closest('.tabs');
+            tabs.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Calculator Functions
+        function calcInput(value) {
+            calcExpression += value;
+            document.getElementById('sciDisplay').textContent = calcExpression || '0';
+        }
+
+        function clearCalc() {
+            calcExpression = '';
+            document.getElementById('sciDisplay').textContent = '0';
+        }
+
+        function calculate() {
+            try {
+                let expr = calcExpression;
+                // Replace math functions
+                expr = expr.replace(/sin/g, 'Math.sin');
+                expr = expr.replace(/cos/g, 'Math.cos');
+                expr = expr.replace(/tan/g, 'Math.tan');
+                expr = expr.replace(/log/g, 'Math.log10');
+                expr = expr.replace(/sqrt/g, 'Math.sqrt');
+                expr = expr.replace(/π/g, 'Math.PI');
+                expr = expr.replace(/e(?![0-9])/g, 'Math.E');
+                expr = expr.replace(/\^/g, '**');
+                
+                const result = eval(expr);
+                document.getElementById('sciDisplay').textContent = result;
+                calcExpression = result.toString();
+                updateStats();
+            } catch (error) {
+                document.getElementById('sciDisplay').textContent = 'Error';
+                calcExpression = '';
+            }
+        }
+
+        // Quadratic Solver
+        function solveQuadratic() {
+            const a = parseFloat(document.getElementById('quadA').value);
+            const b = parseFloat(document.getElementById('quadB').value);
+            const c = parseFloat(document.getElementById('quadC').value);
+            
+            const discriminant = b * b - 4 * a * c;
+            
+            let html = '<div class="result">';
+            html += '<div class="result-label">Discriminant:</div>';
+            html += `<div class="result-value">Δ = ${discriminant.toFixed(4)}</div>`;
+            
+            if (discriminant > 0) {
+                const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                html += '<div class="result-label" style="margin-top: 1rem;">Two Real Solutions:</div>';
+                html += `<div class="result-value">x₁ = ${x1.toFixed(4)}</div>`;
+                html += `<div class="result-value">x₂ = ${x2.toFixed(4)}</div>`;
+            } else if (discriminant === 0) {
+                const x = -b / (2 * a);
+                html += '<div class="result-label" style="margin-top: 1rem;">One Real Solution:</div>';
+                html += `<div class="result-value">x = ${x.toFixed(4)}</div>`;
+            } else {
+                const realPart = -b / (2 * a);
+                const imagPart = Math.sqrt(-discriminant) / (2 * a);
+                html += '<div class="result-label" style="margin-top: 1rem;">Two Complex Solutions:</div>';
+                html += `<div class="result-value">x₁ = ${realPart.toFixed(4)} + ${imagPart.toFixed(4)}i</div>`;
+                html += `<div class="result-value">x₂ = ${realPart.toFixed(4)} - ${imagPart.toFixed(4)}i</div>`;
+            }
+            html += '</div>';
+            
+            document.getElementById('quadResult').innerHTML = html;
+            updateStats();
+        }
+
+        // System of Equations Solver
+        function solveSystem() {
+            const a = parseFloat(document.getElementById('sysA').value);
+            const b = parseFloat(document.getElementById('sysB').value);
+            const c = parseFloat(document.getElementById('sysC').value);
+            const d = parseFloat(document.getElementById('sysD').value);
+            const e = parseFloat(document.getElementById('sysE').value);
+            const f = parseFloat(document.getElementById('sysF').value);
+            
+            const det = a * d - b * c;
+            
+            let html = '<div class="result">';
+            
+            if (det === 0) {
+                html += '<div class="result-value" style="color: var(--error);">No unique solution (determinant = 0)</div>';
+            } else {
+                const x = (e * d - b * f) / det;
+                const y = (a * f - e * c) / det;
+                html += '<div class="result-label">Solution:</div>';
+                html += `<div class="result-value">x = ${x.toFixed(4)}</div>`;
+                html += `<div class="result-value">y = ${y.toFixed(4)}</div>`;
+            }
+            html += '</div>';
+            
+            document.getElementById('systemResult').innerHTML = html;
+            updateStats();
+        }
+
+        // Geometry Calculators
+        function calculateCircle() {
+            const r = parseFloat(document.getElementById('circleR').value);
+            const area = Math.PI * r * r;
+            const circumference = 2 * Math.PI * r;
+            
+            const html = `
+                <div class="result">
+                    <div class="result-label">Area:</div>
+                    <div class="result-value">${area.toFixed(4)} square units</div>
+                    <div class="result-label" style="margin-top: 1rem;">Circumference:</div>
+                    <div class="result-value">${circumference.toFixed(4)} units</div>
+                </div>
+            `;
+            
+            document.getElementById('circleResult').innerHTML = html;
+            updateStats();
+        }
+
+        function calculateTriangle() {
+            const base = parseFloat(document.getElementById('triBase').value);
+            const height = parseFloat(document.getElementById('triHeight').value);
+            const area = 0.5 * base * height;
+            
+            const html = `
+                <div class="result">
+                    <div class="result-label">Area:</div>
+                    <div class="result-value">${area.toFixed(4)} square units</div>
+                </div>
+            `;
+            
+            document.getElementById('triangleResult').innerHTML = html;
+            updateStats();
+        }
+
+        function calculateSphere() {
+            const r = parseFloat(document.getElementById('sphereR').value);
+            const volume = (4/3) * Math.PI * Math.pow(r, 3);
+            const surface = 4 * Math.PI * r * r;
+            
+            const html = `
+                <div class="result">
+                    <div class="result-label">Volume:</div>
+                    <div class="result-value">${volume.toFixed(4)} cubic units</div>
+                    <div class="result-label" style="margin-top: 1rem;">Surface Area:</div>
+                    <div class="result-value">${surface.toFixed(4)} square units</div>
+                </div>
+            `;
+            
+            document.getElementById('sphereResult').innerHTML = html;
+            updateStats();
+        }
+
+        function calculateCylinder() {
+            const r = parseFloat(document.getElementById('cylR').value);
+            const h = parseFloat(document.getElementById('cylH').value);
+            const volume = Math.PI * r * r * h;
+            const surface = 2 * Math.PI * r * (r + h);
+            
+            const html = `
+                <div class="result">
+                    <div class="result-label">Volume:</div>
+                    <div class="result-value">${volume.toFixed(4)} cubic units</div>
+                    <div class="result-label" style="margin-top: 1rem;">Surface Area:</div>
+                    <div class="result-value">${surface.toFixed(4)} square units</div>
+                </div>
+            `;
+            
+            document.getElementById('cylinderResult').innerHTML = html;
+            updateStats();
+        }
+
+        // Shape Drawer
+        function drawShape(shape) {
+            const canvas = document.getElementById('shapeCanvas');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 100;
+            
+            ctx.strokeStyle = '#00ff88';
+            ctx.fillStyle = 'rgba(0, 255, 136, 0.2)';
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#00ff88';
+            
+            ctx.beginPath();
+            
+            if (shape === 'circle') {
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            } else if (shape === 'square') {
+                ctx.rect(centerX - radius, centerY - radius, radius * 2, radius * 2);
+            } else if (shape === 'triangle') {
+                ctx.moveTo(centerX, centerY - radius);
+                ctx.lineTo(centerX - radius, centerY + radius);
+                ctx.lineTo(centerX + radius, centerY + radius);
+                ctx.closePath();
+            } else if (shape === 'pentagon') {
+                for (let i = 0; i < 5; i++) {
+                    const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                    const x = centerX + radius * Math.cos(angle);
+                    const y = centerY + radius * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+            }
+            
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        function clearCanvas() {
+            const canvas = document.getElementById('shapeCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Calculus Functions
+        function calculateDerivative() {
+            const func = document.getElementById('derivFunc').value;
+            
+            // Simple derivative rules
+            let derivative = func;
+            derivative = derivative.replace(/x\^(\d+)/g, (match, n) => {
+                const power = parseInt(n);
+                if (power === 2) return `${power}x`;
+                return `${power}x^${power - 1}`;
+            });
+            derivative = derivative.replace(/sin\(x\)/g, 'cos(x)');
+            derivative = derivative.replace(/cos\(x\)/g, '-sin(x)');
+            derivative = derivative.replace(/e\^x/g, 'e^x');
+            
+            const html = `
+                <div class="result">
+                    <div class="result-label">Original Function:</div>
+                    <div class="result-value">f(x) = ${func}</div>
+                    <div class="result-label" style="margin-top: 1rem;">Derivative:</div>
+                    <div class="result-value">f'(x) = ${derivative}</div>
+                </div>
+            `;
+            
+            document.getElementById('derivResult').innerHTML = html;
+            updateStats();
+        }
+
+        function calculateIntegral() {
+            const func = document.getElementById('integralFunc').value;
+            const a = parseFloat(document.getElementById('integralLower').value);
+            const b = parseFloat(document.getElementById('integralUpper').value);
+            
+            // Numerical integration using Simpson's rule
+            const n = 1000;
+            const h = (b - a) / n;
+            let sum = 0;
+            
+            for (let i = 0; i <= n; i++) {
+                const x = a + i * h;
+                let y = 0;
+                
+                try {
+                    let expr = func.replace(/x/g, `(${x})`);
+                    expr = expr.replace(/sin/g, 'Math.sin');
+                    expr = expr.replace(/cos/g, 'Math.cos');
+                    expr = expr.replace(/\^/g, '**');
+                    y = eval(expr);
+                } catch (e) {
+                    y = 0;
+                }
+                
+                if (i === 0 || i === n) {
+                    sum += y;
+                } else if (i % 2 === 0) {
+                    sum += 2 * y;
+                } else {
+                    sum += 4 * y;
+                }
+            }
+            
+            const result = (h / 3) * sum;
+            
+            const html = `
+                <div class="result">
+                    <div class="result-label">Definite Integral:</div>
+                    <div class="result-value">∫[${a}, ${b}] ${func} dx ≈ ${result.toFixed(6)}</div>
+                </div>
+            `;
+            
+            document.getElementById('integralResult').innerHTML = html;
+            updateStats();
+        }
+
+        // Statistics Functions
+        function calculateStats() {
+            const input = document.getElementById('statsData').value;
+            const data = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+            
+            if (data.length === 0) {
+                document.getElementById('statsResult').innerHTML = '<div class="result"><div class="result-value" style="color: var(--error);">Please enter valid data</div></div>';
+                return;
+            }
+            
+            const n = data.length;
+            const sum = data.reduce((a, b) => a + b, 0);
+            const mean = sum / n;
+            
+            const sorted = [...data].sort((a, b) => a - b);
+            const median = n % 2 === 0 
+                ? (sorted[n/2 - 1] + sorted[n/2]) / 2 
+                : sorted[Math.floor(n/2)];
+            
+            const variance = data.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
+            const stdDev = Math.sqrt(variance);
+            
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const range = max - min;
+            
+            const html = `
+                <div class="result">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-value">${mean.toFixed(2)}</div>
+                            <div class="stat-card-label">Mean</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value">${median.toFixed(2)}</div>
+                            <div class="stat-card-label">Median</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value">${stdDev.toFixed(2)}</div>
+                            <div class="stat-card-label">Std Dev</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value">${min}</div>
+                            <div class="stat-card-label">Min</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value">${max}</div>
+                            <div class="stat-card-label">Max</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value">${range.toFixed(2)}</div>
+                            <div class="stat-card-label">Range</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('statsResult').innerHTML = html;
+            updateStats();
+        }
+
+        // Probability Calculator
+        function calculateProbability() {
+            const n = parseInt(document.getElementById('probTrials').value);
+            const p = parseFloat(document.getElementById('probSuccess').value);
+            const k = parseInt(document.getElementById('probK').value);
+            
+            // Binomial probability
+            function factorial(num) {
+                if (num <= 1) return 1;
+                return num * factorial(num - 1);
+            }
+            
+            function binomialCoeff(n, k) {
+                return factorial(n) / (factorial(k) * factorial(n - k));
+            }
+            
+            const prob = binomialCoeff(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+            
+            const html = `
+                <div class="result">
+                    <div class="result-label">Binomial Probability:</div>
+                    <div class="result-value">P(X = ${k}) = ${prob.toFixed(6)}</div>
+                    <div class="result-value">${(prob * 100).toFixed(4)}%</div>
+                </div>
+            `;
+            
+            document.getElementById('probResult').innerHTML = html;
+            updateStats();
+        }
+
+        // Matrix Operations
+        function getMatrix(prefix) {
+            return [
+                [parseFloat(document.getElementById(`${prefix}11`).value), 
+                 parseFloat(document.getElementById(`${prefix}12`).value)],
+                [parseFloat(document.getElementById(`${prefix}21`).value), 
+                 parseFloat(document.getElementById(`${prefix}22`).value)]
+            ];
+        }
+
+        function displayMatrix(matrix, resultId) {
+            let html = '<div class="result"><div class="matrix-display">';
+            matrix.forEach(row => {
+                html += '<div class="matrix-row">';
+                row.forEach(cell => {
+                    html += `<div class="matrix-cell">${cell.toFixed(2)}</div>`;
+                });
+                html += '</div>';
+            });
+            html += '</div></div>';
+            document.getElementById(resultId).innerHTML = html;
+        }
+
+        function addMatrices() {
+            const A = getMatrix('a');
+            const B = getMatrix('b');
+            const result = [
+                [A[0][0] + B[0][0], A[0][1] + B[0][1]],
+                [A[1][0] + B[1][0], A[1][1] + B[1][1]]
+            ];
+            displayMatrix(result, 'matrixAddResult');
+            updateStats();
+        }
+
+        function multiplyMatrices() {
+            const A = getMatrix('a');
+            const B = getMatrix('b');
+            const result = [
+                [A[0][0]*B[0][0] + A[0][1]*B[1][0], A[0][0]*B[0][1] + A[0][1]*B[1][1]],
+                [A[1][0]*B[0][0] + A[1][1]*B[1][0], A[1][0]*B[0][1] + A[1][1]*B[1][1]]
+            ];
+            displayMatrix(result, 'matrixMultResult');
+            updateStats();
+        }
+
+        function calculateDeterminant() {
+            const A = getMatrix('a');
+            const det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
+            
+            const html = `
+                <div class="result">
+                    <div class="result-label">Determinant:</div>
+                    <div class="result-value">det(A) = ${det.toFixed(4)}</div>
+                </div>
+            `;
+            
+            document.getElementById('matrixDetResult').innerHTML = html;
+            updateStats();
+        }
+
+        function calculateInverse() {
+            const A = getMatrix('a');
+            const det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
+            
+            if (Math.abs(det) < 0.0001) {
+                document.getElementById('matrixInvResult').innerHTML = 
+                    '<div class="result"><div class="result-value" style="color: var(--error);">Matrix is not invertible (det = 0)</div></div>';
+                return;
+            }
+            
+            const inv = [
+                [A[1][1] / det, -A[0][1] / det],
+                [-A[1][0] / det, A[0][0] / det]
+            ];
+            
+            displayMatrix(inv, 'matrixInvResult');
+            updateStats();
+        }
+
+        // Graph Plotter
+        function plotGraph() {
+            const canvas = document.getElementById('graphCanvas');
+            const ctx = canvas.getContext('2d');
+            const func = document.getElementById('graphFunc').value;
+            const xMin = parseFloat(document.getElementById('xMin').value);
+            const xMax = parseFloat(document.getElementById('xMax').value);
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = 'rgba(0, 255, 136, 0.1)';
+            ctx.lineWidth = 1;
+            
+            for (let i = 0; i <= 20; i++) {
+                const x = (canvas.width / 20) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+                
+                const y = (canvas.height / 20) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Draw axes
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            
+            // Plot function
+            ctx.strokeStyle = '#ff00ff';
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ff00ff';
+            ctx.beginPath();
+            
+            const points = 1000;
+            let firstPoint = true;
+            
+            for (let i = 0; i <= points; i++) {
+                const x = xMin + (xMax - xMin) * (i / points);
+                let y;
+                
+                try {
+                    let expr = func.replace(/x/g, `(${x})`);
+                    expr = expr.replace(/sin/g, 'Math.sin');
+                    expr = expr.replace(/cos/g, 'Math.cos');
+                    expr = expr.replace(/tan/g, 'Math.tan');
+                    expr = expr.replace(/log/g, 'Math.log10');
+                    expr = expr.replace(/sqrt/g, 'Math.sqrt');
+                    expr = expr.replace(/e\^/g, 'Math.E**');
+                    expr = expr.replace(/\^/g, '**');
+                    y = eval(expr);
+                } catch (e) {
+                    continue;
+                }
+                
+                if (!isFinite(y)) continue;
+                
+                const canvasX = ((x - xMin) / (xMax - xMin)) * canvas.width;
+                const canvasY = canvas.height / 2 - (y * 20);
+                
+                if (firstPoint) {
+                    ctx.moveTo(canvasX, canvasY);
+                    firstPoint = false;
+                } else {
+                    ctx.lineTo(canvasX, canvasY);
+                }
+            }
+            
+            ctx.stroke();
+            updateStats();
+        }
+
+        // Quiz Functions
+        function startQuiz() {
+            quizQuestions = generateQuizQuestions();
+            currentQuizIndex = 0;
+            displayQuizQuestion();
+        }
+
+        function generateQuizQuestions() {
+            const questions = [
+                {
+                    question: "What is the derivative of x²?",
+                    options: ["2x", "x", "2x²", "x²/2"],
+                    correct: 0
+                },
+                {
+                    question: "What is the value of π (pi) to 2 decimal places?",
+                    options: ["3.12", "3.14", "3.16", "3.18"],
+                    correct: 1
+                },
+                {
+                    question: "What is 15% of 200?",
+                    options: ["25", "30", "35", "40"],
+                    correct: 1
+                },
+                {
+                    question: "What is the square root of 144?",
+                    options: ["10", "11", "12", "13"],
+                    correct: 2
+                },
+                {
+                    question: "What is 7 × 8?",
+                    options: ["54", "56", "58", "60"],
+                    correct: 1
+                },
+                {
+                    question: "What is the area of a circle with radius 5?",
+                    options: ["25π", "10π", "15π", "20π"],
+                    correct: 0
+                },
+                {
+                    question: "What is the sum of angles in a triangle?",
+                    options: ["90°", "180°", "270°", "360°"],
+                    correct: 1
+                },
+                {
+                    question: "What is 2³?",
+                    options: ["6", "8", "9", "12"],
+                    correct: 1
+                },
+                {
+                    question: "What is the factorial of 5?",
+                    options: ["60", "100", "120", "150"],
+                    correct: 2
+                },
+                {
+                    question: "What is sin(90°)?",
+                    options: ["0", "0.5", "1", "√2/2"],
+                    correct: 2
+                }
+            ];
+            
+            return questions.sort(() => Math.random() - 0.5).slice(0, 5);
+        }
+
+        function displayQuizQuestion() {
+            if (currentQuizIndex >= quizQuestions.length) {
+                finishQuiz();
+                return;
+            }
+            
+            const question = quizQuestions[currentQuizIndex];
+            const progress = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
+            
+            document.getElementById('quizProgress').style.width = progress + '%';
+            document.getElementById('quizProgress').textContent = Math.round(progress) + '%';
+            
+            let html = `
+                <div class="quiz-question">
+                    <h3 style="color: var(--accent); margin-bottom: 1.5rem;">
+                        Question ${currentQuizIndex + 1} of ${quizQuestions.length}
+                    </h3>
+                    <p style="font-size: 1.3rem; margin-bottom: 1rem;">${question.question}</p>
+                    <div class="quiz-options">
+            `;
+            
+            question.options.forEach((option, index) => {
+                html += `
+                    <div class="quiz-option" onclick="selectAnswer(${index})">
+                        ${String.fromCharCode(65 + index)}. ${option}
+                    </div>
+                `;
+            });
+            
+            html += '</div></div>';
+            document.getElementById('quizContainer').innerHTML = html;
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = quizQuestions[currentQuizIndex];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options.forEach((option, index) => {
+                option.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                }
+                if (index === selectedIndex && index !== question.correct) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            if (selectedIndex === question.correct) {
+                correctAnswers++;
+                currentStreak++;
+            } else {
+                currentStreak = 0;
+            }
+            
+            problemsSolved++;
+            
+            setTimeout(() => {
+                currentQuizIndex++;
+                displayQuizQuestion();
+            }, 1500);
+        }
+
+        function finishQuiz() {
+            const score = (correctAnswers / quizQuestions.length) * 100;
+            
+            const html = `
+                <div class="result">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">Quiz Complete! 🎉</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-value">${score.toFixed(0)}%</div>
+                            <div class="stat-card-label">Score</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-value">${correctAnswers}/${quizQuestions.length}</div>
+                            <div class="stat-card-label">Correct</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('quizContainer').innerHTML = html;
+            updateStats();
+        }
+
+        // Memory Game
+        function startMemoryGame() {
+            const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
+            const equations = ['2+2', '3×3', '5²', '√64', '4!', '2⁵', '3³', '7×4'];
+            const answers = ['4', '9', '25', '8', '24', '32', '27', '28'];
+            
+            gameCards = [];
+            for (let i = 0; i < 8; i++) {
+                gameCards.push({ id: i, content: equations[i], pair: answers[i], type: 'equation' });
+                gameCards.push({ id: i + 8, content: answers[i], pair: equations[i], type: 'answer' });
+            }
+            
+            gameCards = gameCards.sort(() => Math.random() - 0.5);
+            flippedCards = [];
+            matchedPairs = 0;
+            gameMoves = 0;
+            
+            document.getElementById('gameScore').textContent = '0';
+            document.getElementById('gameMoves').textContent = '0';
+            
+            gameStartTime = Date.now();
+            if (gameTimer) clearInterval(gameTimer);
+            gameTimer = setInterval(updateGameTime, 1000);
+            
+            displayGameBoard();
+        }
+
+        function displayGameBoard() {
+            let html = '';
+            gameCards.forEach((card, index) => {
+                html += `
+                    <div class="game-card" id="card${index}" onclick="flipCard(${index})">
+                        <div style="opacity: 0; transition: opacity 0.3s;">?</div>
+                    </div>
+                `;
+            });
+            document.getElementById('gameBoard').innerHTML = html;
+        }
+
+        function flipCard(index) {
+            const card = document.getElementById(`card${index}`);
+            
+            if (card.classList.contains('flipped') || 
+                card.classList.contains('matched') || 
+                flippedCards.length >= 2) {
+                return;
+            }
+            
+            card.classList.add('flipped');
+            card.querySelector('div').style.opacity = '1';
+            card.querySelector('div').textContent = gameCards[index].content;
+            flippedCards.push(index);
+            
+            if (flippedCards.length === 2) {
+                gameMoves++;
+                document.getElementById('gameMoves').textContent = gameMoves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [index1, index2] = flippedCards;
+            const card1 = gameCards[index1];
+            const card2 = gameCards[index2];
+            
+            setTimeout(() => {
+                if ((card1.type === 'equation' && card2.type === 'answer' && card1.pair === card2.content) ||
+                    (card1.type === 'answer' && card2.type === 'equation' && card1.pair === card2.content)) {
+                    // Match!
+                    document.getElementById(`card${index1}`).classList.add('matched');
+                    document.getElementById(`card${index2}`).classList.add('matched');
+                    matchedPairs++;
+                    
+                    const score = Math.max(0, 100 - (gameMoves - matchedPairs) * 5);
+                    document.getElementById('gameScore').textContent = score;
+                    
+                    if (matchedPairs === 8) {
+                        clearInterval(gameTimer);
+                        setTimeout(() => {
+                            alert(`🎉 Congratulations! You won with ${gameMoves} moves in ${document.getElementById('gameTime').textContent}!`);
+                        }, 500);
+                    }
+                } else {
+                    // No match
+                    document.getElementById(`card${index1}`).classList.remove('flipped');
+                    document.getElementById(`card${index2}`).classList.remove('flipped');
+                    document.getElementById(`card${index1}`).querySelector('div').style.opacity = '0';
+                    document.getElementById(`card${index2}`).querySelector('div').style.opacity = '0';
+                }
+                flippedCards = [];
+            }, 1000);
+        }
+
+        function updateGameTime() {
+            const elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('gameTime').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Stats Update
+        function updateStats() {
+            problemsSolved++;
+            document.getElementById('problemsSolved').textContent = problemsSolved;
+            
+            const accuracy = problemsSolved > 0 
+                ? Math.round((correctAnswers / problemsSolved) * 100) 
+                : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            document.getElementById('streak').textContent = currentStreak;
+        }
+
+        // Particle Effect
+        function createParticles(x, y) {
+            const symbols = ['∫', '∑', '∞', 'π', '√', '∆', 'θ', 'α', 'β', 'γ'];
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 2000);
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            plotGraph();
+            drawShape('circle');
+            // Set default target language to Uzbek
+            document.getElementById('targetLang').value = 'uz';
+        });
+
+        // ============================================
+        // TRANSLATOR FUNCTIONALITY
+        // ============================================
+
+        let translationHistoryList = [];
+        let currentLanguage = 'en';
+
+        // Comprehensive translation dictionary
+        const translations = {
+            en: {
+                // Navigation
+                'nav-calculators': '🔢 Calculators',
+                'nav-algebra': '📐 Algebra',
+                'nav-geometry': '📊 Geometry',
+                'nav-calculus': '∫ Calculus',
+                'nav-statistics': '📈 Statistics',
+                'nav-matrix': '⊞ Matrix',
+                'nav-graphing': '📉 Graphing',
+                'nav-quiz': '🎯 Quiz',
+                'nav-games': '🎮 Games',
+                'nav-translator': '🌐 Translator',
+                
+                // Stats
+                'problems-solved': 'Problems Solved',
+                'accuracy': 'Accuracy',
+                'streak': 'Streak',
+                'score': 'Score',
+                'moves': 'Moves',
+                'time': 'Time',
+                
+                // Translator
+                'translator-title': '🌐 Multi-Language Translator',
+                'translator-desc': 'Translate text between English, Uzbek, and Russian',
+                'from-lang': 'From Language:',
+                'to-lang': 'To Language:',
+                'enter-text': 'Enter Text:',
+                'translation': 'Translation:',
+                'translate-btn': '🔄 Translate',
+                'copy-btn': '📋 Copy Translation',
+                'clear-btn': '🗑️ Clear',
+                'quick-phrases': 'Quick Phrases:',
+                'translation-history': 'Translation History:',
+                'math-terms-title': '📚 Common Math Terms',
+                'memory-game-title': 'Math Memory Match',
+                'new-game': 'New Game',
+                
+                // Languages
+                'english': 'English',
+                'uzbek': 'Uzbek',
+                'russian': 'Russian',
+                
+                // Phrases
+                'phrase-hello': 'Hello, how are you?',
+                'phrase-thanks': 'Thank you very much',
+                'phrase-morning': 'Good morning',
+                'phrase-help': 'Please help me',
+                'phrase-hospital': 'Where is the nearest hospital?',
+                'phrase-math': 'I love mathematics'
+            },
+            uz: {
+                // Navigation
+                'nav-calculators': '🔢 Kalkulyatorlar',
+                'nav-algebra': '📐 Algebra',
+                'nav-geometry': '📊 Geometriya',
+                'nav-calculus': '∫ Matematik tahlil',
+                'nav-statistics': '📈 Statistika',
+                'nav-matrix': '⊞ Matritsa',
+                'nav-graphing': '📉 Grafiklar',
+                'nav-quiz': '🎯 Viktorina',
+                'nav-games': '🎮 O\'yinlar',
+                'nav-translator': '🌐 Tarjimon',
+                
+                // Stats
+                'problems-solved': 'Yechilgan masalalar',
+                'accuracy': 'Aniqlik',
+                'streak': 'Ketma-ketlik',
+                'score': 'Ball',
+                'moves': 'Harakatlar',
+                'time': 'Vaqt',
+                
+                // Translator
+                'translator-title': '🌐 Ko\'p tilli tarjimon',
+                'translator-desc': 'Ingliz, O\'zbek va Rus tillari o\'rtasida tarjima qiling',
+                'from-lang': 'Qaysi tildan:',
+                'to-lang': 'Qaysi tilga:',
+                'enter-text': 'Matnni kiriting:',
+                'translation': 'Tarjima:',
+                'translate-btn': '🔄 Tarjima qilish',
+                'copy-btn': '📋 Tarjimani nusxalash',
+                'clear-btn': '🗑️ Tozalash',
+                'quick-phrases': 'Tez iboralar:',
+                'translation-history': 'Tarjima tarixi:',
+                'math-terms-title': '📚 Umumiy matematik atamalar',
+                'memory-game-title': 'Matematik xotira o\'yini',
+                'new-game': 'Yangi o\'yin',
+                
+                // Languages
+                'english': 'Ingliz tili',
+                'uzbek': 'O\'zbek tili',
+                'russian': 'Rus tili',
+                
+                // Phrases
+                'phrase-hello': 'Salom, qalaysiz?',
+                'phrase-thanks': 'Katta rahmat',
+                'phrase-morning': 'Xayrli tong',
+                'phrase-help': 'Iltimos, menga yordam bering',
+                'phrase-hospital': 'Eng yaqin shifoxona qayerda?',
+                'phrase-math': 'Men matematikani yaxshi ko\'raman'
+            },
+            ru: {
+                // Navigation
+                'nav-calculators': '🔢 Калькуляторы',
+                'nav-algebra': '📐 Алгебра',
+                'nav-geometry': '📊 Геометрия',
+                'nav-calculus': '∫ Математический анализ',
+                'nav-statistics': '📈 Статистика',
+                'nav-matrix': '⊞ Матрица',
+                'nav-graphing': '📉 Графики',
+                'nav-quiz': '🎯 Викторина',
+                'nav-games': '🎮 Игры',
+                'nav-translator': '🌐 Переводчик',
+                
+                // Stats
+                'problems-solved': 'Решено задач',
+                'accuracy': 'Точность',
+                'streak': 'Серия',
+                'score': 'Счет',
+                'moves': 'Ходы',
+                'time': 'Время',
+                
+                // Translator
+                'translator-title': '🌐 Многоязычный переводчик',
+                'translator-desc': 'Переводите текст между английским, узбекским и русским языками',
+                'from-lang': 'С языка:',
+                'to-lang': 'На язык:',
+                'enter-text': 'Введите текст:',
+                'translation': 'Перевод:',
+                'translate-btn': '🔄 Перевести',
+                'copy-btn': '📋 Копировать перевод',
+                'clear-btn': '🗑️ Очистить',
+                'quick-phrases': 'Быстрые фразы:',
+                'translation-history': 'История переводов:',
+                'math-terms-title': '📚 Общие математические термины',
+                'memory-game-title': 'Математическая игра на память',
+                'new-game': 'Новая игра',
+                
+                // Languages
+                'english': 'Английский',
+                'uzbek': 'Узбекский',
+                'russian': 'Русский',
+                
+                // Phrases
+                'phrase-hello': 'Здравствуйте, как дела?',
+                'phrase-thanks': 'Большое спасибо',
+                'phrase-morning': 'Доброе утро',
+                'phrase-help': 'Пожалуйста, помогите мне',
+                'phrase-hospital': 'Где ближайшая больница?',
+                'phrase-math': 'Я люблю математику'
+            }
+        };
+
+        // Translation dictionary for common words and phrases
+        const dictionary = {
+            'en-uz': {
+                'hello': 'salom',
+                'how are you': 'qalaysiz',
+                'thank you': 'rahmat',
+                'very much': 'katta',
+                'good morning': 'xayrli tong',
+                'good afternoon': 'xayrli kun',
+                'good evening': 'xayrli kech',
+                'good night': 'xayrli tun',
+                'please': 'iltimos',
+                'help me': 'menga yordam bering',
+                'where': 'qayerda',
+                'hospital': 'shifoxona',
+                'nearest': 'eng yaqin',
+                'i love': 'men yaxshi ko\'raman',
+                'mathematics': 'matematika',
+                'yes': 'ha',
+                'no': 'yo\'q',
+                'water': 'suv',
+                'food': 'ovqat',
+                'book': 'kitob',
+                'school': 'maktab',
+                'teacher': 'o\'qituvchi',
+                'student': 'talaba',
+                'friend': 'do\'st',
+                'family': 'oila',
+                'mother': 'ona',
+                'father': 'ota',
+                'brother': 'aka/uka',
+                'sister': 'opa/singil',
+                'day': 'kun',
+                'week': 'hafta',
+                'month': 'oy',
+                'year': 'yil',
+                'time': 'vaqt',
+                'money': 'pul',
+                'house': 'uy',
+                'car': 'mashina',
+                'beautiful': 'chiroyli',
+                'good': 'yaxshi',
+                'bad': 'yomon',
+                'big': 'katta',
+                'small': 'kichik',
+                'new': 'yangi',
+                'old': 'eski'
+            },
+            'en-ru': {
+                'hello': 'привет',
+                'how are you': 'как дела',
+                'thank you': 'спасибо',
+                'very much': 'большое',
+                'good morning': 'доброе утро',
+                'good afternoon': 'добрый день',
+                'good evening': 'добрый вечер',
+                'good night': 'спокойной ночи',
+                'please': 'пожалуйста',
+                'help me': 'помогите мне',
+                'where': 'где',
+                'hospital': 'больница',
+                'nearest': 'ближайшая',
+                'i love': 'я люблю',
+                'mathematics': 'математику',
+                'yes': 'да',
+                'no': 'нет',
+                'water': 'вода',
+                'food': 'еда',
+                'book': 'книга',
+                'school': 'школа',
+                'teacher': 'учитель',
+                'student': 'студент',
+                'friend': 'друг',
+                'family': 'семья',
+                'mother': 'мама',
+                'father': 'папа',
+                'brother': 'брат',
+                'sister': 'сестра',
+                'day': 'день',
+                'week': 'неделя',
+                'month': 'месяц',
+                'year': 'год',
+                'time': 'время',
+                'money': 'деньги',
+                'house': 'дом',
+                'car': 'машина',
+                'beautiful': 'красивый',
+                'good': 'хороший',
+                'bad': 'плохой',
+                'big': 'большой',
+                'small': 'маленький',
+                'new': 'новый',
+                'old': 'старый'
+            },
+            'uz-en': {
+                'salom': 'hello',
+                'qalaysiz': 'how are you',
+                'rahmat': 'thank you',
+                'katta': 'very much',
+                'xayrli tong': 'good morning',
+                'xayrli kun': 'good afternoon',
+                'xayrli kech': 'good evening',
+                'xayrli tun': 'good night',
+                'iltimos': 'please',
+                'menga yordam bering': 'help me',
+                'qayerda': 'where',
+                'shifoxona': 'hospital',
+                'eng yaqin': 'nearest',
+                'men yaxshi ko\'raman': 'i love',
+                'matematika': 'mathematics',
+                'ha': 'yes',
+                'yo\'q': 'no'
+            },
+            'uz-ru': {
+                'salom': 'привет',
+                'qalaysiz': 'как дела',
+                'rahmat': 'спасибо',
+                'katta': 'большое',
+                'xayrli tong': 'доброе утро',
+                'iltimos': 'пожалуйста',
+                'matematika': 'математика',
+                'ha': 'да',
+                'yo\'q': 'нет'
+            },
+            'ru-en': {
+                'привет': 'hello',
+                'как дела': 'how are you',
+                'спасибо': 'thank you',
+                'большое': 'very much',
+                'доброе утро': 'good morning',
+                'добрый день': 'good afternoon',
+                'добрый вечер': 'good evening',
+                'спокойной ночи': 'good night',
+                'пожалуйста': 'please',
+                'помогите мне': 'help me',
+                'где': 'where',
+                'больница': 'hospital',
+                'ближайшая': 'nearest',
+                'я люблю': 'i love',
+                'математику': 'mathematics',
+                'да': 'yes',
+                'нет': 'no'
+            },
+            'ru-uz': {
+                'привет': 'salom',
+                'как дела': 'qalaysiz',
+                'спасибо': 'rahmat',
+                'большое': 'katta',
+                'доброе утро': 'xayrli tong',
+                'пожалуйста': 'iltimos',
+                'математика': 'matematika',
+                'да': 'ha',
+                'нет': 'yo\'q'
+            }
+        };
+
+        // Change interface language
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update all elements with data-translate attribute
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'BUTTON') {
+                        if (element.hasAttribute('value')) {
+                            element.value = translations[lang][key];
+                        } else {
+                            element.textContent = translations[lang][key];
+                        }
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+
+            // Update option elements
+            document.querySelectorAll('option[data-translate]').forEach(option => {
+                const key = option.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        // Translate text
+        function translateText() {
+            const sourceText = document.getElementById('sourceText').value.trim();
+            const sourceLang = document.getElementById('sourceLang').value;
+            const targetLang = document.getElementById('targetLang').value;
+
+            if (!sourceText) {
+                alert(currentLanguage === 'uz' ? 'Iltimos, matnni kiriting!' : 
+                      currentLanguage === 'ru' ? 'Пожалуйста, введите текст!' : 
+                      'Please enter text!');
+                return;
+            }
+
+            if (sourceLang === targetLang) {
+                alert(currentLanguage === 'uz' ? 'Turli tillarni tanlang!' : 
+                      currentLanguage === 'ru' ? 'Выберите разные языки!' : 
+                      'Please select different languages!');
+                return;
+            }
+
+            // Perform translation
+            const translatedText = performTranslation(sourceText, sourceLang, targetLang);
+            document.getElementById('targetText').textContent = translatedText;
+
+            // Add to history
+            addToHistory(sourceText, translatedText, sourceLang, targetLang);
+
+            // Create particle effect
+            createParticles(window.innerWidth / 2, window.innerHeight / 2);
+        }
+
+        // Perform the actual translation
+        function performTranslation(text, fromLang, toLang) {
+            const key = fromLang + '-' + toLang;
+            const dict = dictionary[key] || {};
+            
+            let translatedText = text.toLowerCase();
+            
+            // Sort phrases by length (longest first) to handle multi-word phrases
+            const phrases = Object.keys(dict).sort((a, b) => b.length - a.length);
+            
+            // Replace known phrases
+            for (const phrase of phrases) {
+                const regex = new RegExp('\\b' + phrase + '\\b', 'gi');
+                translatedText = translatedText.replace(regex, dict[phrase]);
+            }
+            
+            // Capitalize first letter
+            translatedText = translatedText.charAt(0).toUpperCase() + translatedText.slice(1);
+            
+            return translatedText;
+        }
+
+        // Add translation to history
+        function addToHistory(source, target, sourceLang, targetLang) {
+            const langNames = {
+                'en': currentLanguage === 'uz' ? 'Ingliz' : currentLanguage === 'ru' ? 'Английский' : 'English',
+                'uz': currentLanguage === 'uz' ? 'O\'zbek' : currentLanguage === 'ru' ? 'Узбекский' : 'Uzbek',
+                'ru': currentLanguage === 'uz' ? 'Rus' : currentLanguage === 'ru' ? 'Русский' : 'Russian'
+            };
+
+            const historyItem = {
+                source: source,
+                target: target,
+                sourceLang: langNames[sourceLang],
+                targetLang: langNames[targetLang],
+                timestamp: new Date().toLocaleTimeString()
+            };
+
+            translationHistoryList.unshift(historyItem);
+            if (translationHistoryList.length > 5) {
+                translationHistoryList.pop();
+            }
+
+            updateHistoryDisplay();
+        }
+
+        // Update history display
+        function updateHistoryDisplay() {
+            const historyContainer = document.getElementById('translationHistory');
+            
+            if (translationHistoryList.length === 0) {
+                historyContainer.innerHTML = `<p style="color: var(--text-dim); text-align: center;">
+                    ${currentLanguage === 'uz' ? 'Tarjima tarixi bo\'sh' : 
+                      currentLanguage === 'ru' ? 'История переводов пуста' : 
+                      'No translation history'}
+                </p>`;
+                return;
+            }
+
+            let html = '';
+            translationHistoryList.forEach((item, index) => {
+                html += `
+                    <div class="result" style="margin-bottom: 1rem; animation-delay: ${index * 0.1}s;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="color: var(--text-dim); font-size: 0.85rem;">
+                                ${item.sourceLang} → ${item.targetLang}
+                            </span>
+                            <span style="color: var(--text-dim); font-size: 0.75rem;">
+                                ${item.timestamp}
+                            </span>
+                        </div>
+                        <div style="color: var(--text); margin-bottom: 0.5rem;">
+                            ${item.source}
+                        </div>
+                        <div style="color: var(--primary); font-weight: 600;">
+                            → ${item.target}
+                        </div>
+                    </div>
+                `;
+            });
+
+            historyContainer.innerHTML = html;
+        }
+
+        // Swap languages
+        function swapLanguages() {
+            const sourceLang = document.getElementById('sourceLang');
+            const targetLang = document.getElementById('targetLang');
+            const sourceText = document.getElementById('sourceText');
+            const targetText = document.getElementById('targetText');
+
+            // Swap language selections
+            const tempLang = sourceLang.value;
+            sourceLang.value = targetLang.value;
+            targetLang.value = tempLang;
+
+            // Swap text contents
+            const tempText = sourceText.value;
+            sourceText.value = targetText.textContent;
+            targetText.textContent = tempText;
+
+            // Create particle effect
+            createParticles(window.innerWidth / 2, window.innerHeight / 2);
+        }
+
+        // Copy translation
+        function copyTranslation() {
+            const targetText = document.getElementById('targetText').textContent;
+            
+            if (!targetText) {
+                alert(currentLanguage === 'uz' ? 'Tarjima mavjud emas!' : 
+                      currentLanguage === 'ru' ? 'Нет перевода для копирования!' : 
+                      'No translation to copy!');
+                return;
+            }
+
+            navigator.clipboard.writeText(targetText).then(() => {
+                const message = currentLanguage === 'uz' ? 'Tarjima nusxalandi!' : 
+                                currentLanguage === 'ru' ? 'Перевод скопирован!' : 
+                                'Translation copied!';
+                
+                // Show temporary notification
+                const notification = document.createElement('div');
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(135deg, var(--primary), var(--accent));
+                    color: var(--bg-dark);
+                    padding: 1.5rem 3rem;
+                    border-radius: 12px;
+                    font-weight: 700;
+                    font-size: 1.2rem;
+                    z-index: 10000;
+                    box-shadow: 0 10px 40px rgba(0, 255, 136, 0.5);
+                    animation: fadeIn 0.3s ease-out;
+                `;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.animation = 'fadeOut 0.3s ease-out';
+                    setTimeout(() => notification.remove(), 300);
+                }, 2000);
+            });
+        }
+
+        // Clear translator
+        function clearTranslator() {
+            document.getElementById('sourceText').value = '';
+            document.getElementById('targetText').textContent = '';
+            createParticles(window.innerWidth / 2, window.innerHeight / 2);
+        }
+
+        // Insert quick phrase
+        function insertPhrase(phrase) {
+            document.getElementById('sourceText').value = phrase;
+            createParticles(event.clientX, event.clientY);
+        }
+    </script>
+</body>
+</html>
